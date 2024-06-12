@@ -15,7 +15,6 @@ def view_dummy(request):
 
 
 import requests
-import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -33,7 +32,7 @@ class ParcelDetailView(APIView):
         
         try:
             response = requests.get(url)
-            response.raise_for_status()
+            response.raise_for_status()  # Raises HTTPError for 4xx and 5xx status codes
             data = response.json()
             return Response(data, status=status.HTTP_200_OK)
         except requests.exceptions.HTTPError as http_err:
@@ -42,9 +41,10 @@ class ParcelDetailView(APIView):
             return Response({"error": f"Connection error occurred: {conn_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except requests.exceptions.Timeout as timeout_err:
             return Response({"error": f"Timeout error occurred: {timeout_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except requests.exceptions.ProxyError as proxy_err:  # New exception handling for ProxyError
+            return Response({"error": f"Proxy error occurred: {proxy_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except requests.exceptions.RequestException as req_err:
             return Response({"error": f"An error occurred: {req_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
         
@@ -304,7 +304,7 @@ class ParcelImageView(APIView):
             return Response({"error": f"Connection error occurred: {conn_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except requests.exceptions.Timeout as timeout_err:
             return Response({"error": f"Timeout error occurred: {timeout_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except requests.exceptions.ProxyError as proxy_err:
+            return Response({"error": f"Proxy error occurred: {proxy_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except requests.exceptions.RequestException as req_err:
             return Response({"error": f"An error occurred: {req_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
