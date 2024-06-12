@@ -219,19 +219,24 @@ class ParcelDetailView(APIView):
 
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 import requests
 import json
+from pprint import pprint
+import folium
+import geopandas as gpd
+import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, LineString
 from shapely.ops import transform
 from functools import partial
 import pyproj
 import warnings
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+
+import warnings
 import folium
-import geopandas as gpd
-import matplotlib.pyplot as plt
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 warnings.filterwarnings("ignore")
