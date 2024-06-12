@@ -217,8 +217,13 @@ class ParcelImageView(APIView):
         regrid_api_key = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJyZWdyaWQuY29tIiwiaWF0IjoxNzE4MDEyODMxLCJleHAiOjE3MjA2MDQ4MzEsInUiOjQxMTU3MiwiZyI6MjMxNTMsImNhcCI6InBhOnRzOnBzOmJmOm1hOnR5OmVvOnpvOnNiIn0.GlLWQVnpvbr0zSs6Y733FmO0FomyBYa9jV5mP6f2dcQ"
         url = f"https://app.regrid.com/api/v2/parcels/address?query={address}&token={regrid_api_key}"
 
+        # Add proxy configuration for PythonAnywhere
+        proxies = {
+            'https': 'https://pyproxy.pythonanywhere.com:443'
+        }
+
         try:
-            response = requests.get(url)
+            response = requests.get(url, proxies=proxies)  # Pass proxies parameter
             response.raise_for_status()  # Raises an error for bad responses
 
             data = json.loads(response.text)
@@ -306,5 +311,3 @@ class ParcelImageView(APIView):
             return Response({"error": f"Timeout error occurred: {timeout_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except requests.exceptions.ProxyError as proxy_err:
             return Response({"error": f"Proxy error occurred: {proxy_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        except requests.exceptions.RequestException as req_err:
-            return Response({"error": f"An error occurred: {req_err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
