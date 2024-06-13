@@ -242,15 +242,15 @@ class ParcelImageView(APIView):
             parcel = data["parcels"]["features"][0]["geometry"]["coordinates"][0]
             building = data["buildings"]["features"][0]["geometry"]["coordinates"][0]
 
-            # Create a folium map centered at a specific location with satellite tiles
-            m = folium.Map(location=[32.835081, -96.5638745], zoom_start=19, tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', attr="Google Satellite")
+            # # Create a folium map centered at a specific location with satellite tiles
+            # m = folium.Map(location=[32.835081, -96.5638745], zoom_start=19, tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', attr="Google Satellite")
 
-            # Convert the coordinates to the required format for folium
-            boundary = [[coord[1], coord[0]] for coord in parcel]
-            house = [[coord[1], coord[0]] for coord in building]
+            # # Convert the coordinates to the required format for folium
+            # boundary = [[coord[1], coord[0]] for coord in parcel]
+            # house = [[coord[1], coord[0]] for coord in building]
 
-            # Create a PolyLine connecting the boundary and house, and add it to the map
-            folium.PolyLine(locations=[boundary, house], color='blue', fill=True, fill_color='lightblue', fill_opacity=0.4).add_to(m)
+            # # Create a PolyLine connecting the boundary and house, and add it to the map
+            # folium.PolyLine(locations=[boundary, house], color='blue', fill=True, fill_color='lightblue', fill_opacity=0.4).add_to(m)
 
             # # Save the map to an HTML file
             # map_file_path = 'map.html'
