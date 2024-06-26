@@ -172,3 +172,7 @@ SPECTACULAR_SETTINGS = {
     "persistAuthorization": True,
     "displayOperationId": True,
 }
+
+
+regrid_api_key = os.getenv('REGRID_API_KEY')
+base_url = os.getenv('BASE_URL')
