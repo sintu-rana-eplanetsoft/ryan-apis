@@ -39,29 +39,43 @@ def view_dummy(request):
 
 #working
 
+from django.conf import settings
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 class ParcelDetailView(APIView):
     def get(self, request, format=None):
         address = request.query_params.get('address')
         if not address:
             return Response({"error": "Address parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        regrid_api_key = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJyZWdyaWQuY29tIiwiaWF0IjoxNzE4MDEyODMxLCJleHAiOjE3MjA2MDQ4MzEsInUiOjQxMTU3MiwiZyI6MjMxNTMsImNhcCI6InBhOnRzOnBzOmJmOm1hOnR5OmVvOnpvOnNiIn0.GlLWQVnpvbr0zSs6Y733FmO0FomyBYa9jV5mP6f2dcQ"
-        
+
+        regrid_api_key = os.getenv('REGRID_API_KEY')
+        if not regrid_api_key:
+            return Response({"error": "API key not found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        base_url = os.getenv('BASE_URL')
+        if not base_url:
+            return Response({"error": "Base URL not found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         # Replace spaces with %20 for URL encoding
         address = address.replace(' ', '%20')
-        base_url = "https://app.regrid.com/api/v2/parcels/address"
-        
-        # Construct the API request URL
+
+        # Construct the API request URL using the base_url from .env
         url = f"{base_url}?query={address}&token={regrid_api_key}"
-        
+
         # Send the API request
         response = requests.get(url)
-        
+
         if response.status_code == 200:
             data = response.json()
             return Response(data, status=status.HTTP_200_OK)
         else:
             return Response({"error": "API request failed."}, status=response.status_code)
+
+
 
 
 
@@ -226,35 +240,43 @@ from rest_framework import status
 
 warnings.filterwarnings("ignore")
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+from django.conf import settings
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 class ParcelImageView(APIView):
     def get(self, request, format=None):
         address = request.query_params.get('address')
         if not address:
             return Response({"error": "Address parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        regrid_api_key = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJyZWdyaWQuY29tIiwiaWF0IjoxNzE4MDEyODMxLCJleHAiOjE3MjA2MDQ4MzEsInUiOjQxMTU3MiwiZyI6MjMxNTMsImNhcCI6InBhOnRzOnBzOmJmOm1hOnR5OmVvOnpvOnNiIn0.GlLWQVnpvbr0zSs6Y733FmO0FomyBYa9jV5mP6f2dcQ"
-        url = f"https://app.regrid.com/api/v2/parcels/address?query={address}&token={regrid_api_key}"
+        regrid_api_key = os.getenv('REGRID_API_KEY')
+        if not regrid_api_key:
+            return Response({"error": "API key not found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        base_url = os.getenv('BASE_URL')
+        if not base_url:
+            return Response({"error": "Base URL not found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Construct the API request URL using the base_url and query parameters
+        url = f"{base_url}?query={address}&token={regrid_api_key}"
+
+        # Send the API request
         response = requests.get(url)
 
         if response.status_code == 200:
             data = json.loads(response.text)
             parcel = data["parcels"]["features"][0]["geometry"]["coordinates"][0]
             building = data["buildings"]["features"][0]["geometry"]["coordinates"][0]
-
-            # # Create a folium map centered at a specific location with satellite tiles
-            # m = folium.Map(location=[32.835081, -96.5638745], zoom_start=19, tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', attr="Google Satellite")
-
-            # # Convert the coordinates to the required format for folium
-            # boundary = [[coord[1], coord[0]] for coord in parcel]
-            # house = [[coord[1], coord[0]] for coord in building]
-
-            # # Create a PolyLine connecting the boundary and house, and add it to the map
-            # folium.PolyLine(locations=[boundary, house], color='blue', fill=True, fill_color='lightblue', fill_opacity=0.4).add_to(m)
-
-            # # Save the map to an HTML file
-            # map_file_path = 'map.html'
-            # m.save(map_file_path)
 
             # Create GeoDataFrame for both parcels
             parcel_polygon_1 = Polygon(building)
@@ -337,14 +359,11 @@ class ParcelImageView(APIView):
             plt.title('Site Plan')
             plt.legend()
 
-            # pdf_file_path = 'site_plan.pdf'
-            # plt.savefig(pdf_file_path, format='pdf', bbox_inches='tight')
-
             # Show plot
             plt.show()
 
             return Response({
-                "status":True,
+                "status": True,
                 "message": "Data retrieved and processed successfully.",
             }, status=status.HTTP_200_OK)
 
