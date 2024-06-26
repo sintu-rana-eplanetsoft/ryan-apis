@@ -12,6 +12,10 @@ import json
 def view_dummy(request):
     return Response({'status':True, 'data':'This is dummy API'})
 
+@api_view(['GET'])
+def testing_view(request):
+    return Response('Testing')
+
 
 # class ParcelDetailView(APIView):
 #     def get(self, request, format=None):
