@@ -7,3 +7,4 @@ urlpatterns = [
     path('parcel/', ParcelDetailView.as_view(), name='parcel-detail'),
     path('parcel_image/', ParcelImageView.as_view(), name='parcel-image'),
 ]
+
